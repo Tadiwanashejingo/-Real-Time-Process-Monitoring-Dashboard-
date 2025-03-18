@@ -9,151 +9,135 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #f0f0f0;
+            background-color: #f4f4f4;
         }
-
-        .dashboard {
+        .container {
             max-width: 1200px;
             margin: 0 auto;
+        }
+        .dashboard {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: 1fr 1fr;
             gap: 20px;
         }
-
         .card {
             background: white;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-
-        .metric-title {
-            color: #666;
-            margin: 0 0 10px 0;
-            font-size: 14px;
+        .process-table {
+            width: 100%;
+            border-collapse: collapse;
         }
-
-        .metric-value {
-            font-size: 24px;
-            font-weight: bold;
-            margin: 0;
-        }
-
-        .status-indicator {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 10px;
-        }
-
-        .status-running { background-color: #2ecc71; }
-        .status-stopped { background-color: #e74c3c; }
-        .status-warning { background-color: #f1c40f; }
-
-        #log {
-            height: 200px;
-            overflow-y: auto;
-            border: 1px solid #ddd;
+        .process-table th, .process-table td {
             padding: 10px;
-            font-family: monospace;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
         }
-
-        .log-entry {
-            margin: 5px 0;
-            padding: 5px;
+        .process-table th {
+            background-color: #f0f0f0;
+        }
+        .terminate-btn {
+            background-color: #ff4444;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .terminate-btn:hover {
+            background-color: #cc0000;
+        }
+        #cpu-chart, #memory-chart {
+            height: 300px;
         }
     </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
-    <div class="dashboard">
-        <div class="card">
-            <p class="metric-title">Process Status</p>
-            <div>
-                <span id="statusIndicator" class="status-indicator status-running"></span>
-                <span id="statusText">Running</span>
+    <div class="container">
+        <div class="dashboard">
+            <div class="card">
+                <h2>CPU Usage (%)</h2>
+                <div id="cpu-chart"></div>
             </div>
-        </div>
-        
-        <div class="card">
-            <p class="metric-title">CPU Usage</p>
-            <p class="metric-value" id="cpuUsage">0%</p>
-        </div>
-        
-        <div class="card">
-            <p class="metric-title">Memory Usage</p>
-            <p class="metric-value" id="memoryUsage">0 MB</p>
-        </div>
-        
-        <div class="card" style="grid-column: span 3;">
-            <p class="metric-title">Process Log</p>
-            <div id="log"></div>
+            <div class="card">
+                <h2>Memory Usage (MB)</h2>
+                <div id="memory-chart"></div>
+            </div>
+            <div class="card" style="grid-column: span 2;">
+                <h2>Running Processes</h2>
+                <table class="process-table">
+                    <thead>
+                        <tr>
+                            <th>PID</th>
+                            <th>Name</th>
+                            <th>CPU (%)</th>
+                            <th>Memory (MB)</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="process-list"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <script>
-        class ProcessMonitor {
-            constructor() {
-                this.statusElement = document.getElementById('statusIndicator');
-                this.statusText = document.getElementById('statusText');
-                this.cpuElement = document.getElementById('cpuUsage');
-                this.memoryElement = document.getElementById('memoryUsage');
-                this.logElement = document.getElementById('log');
-                
-                this.startMonitoring();
-            }
-
-            // Simulate real-time data updates
-            startMonitoring() {
-                setInterval(() => {
-                    this.updateMetrics();
-                }, 1000); // Update every second
-            }
-
-            updateMetrics() {
-                // Simulate CPU usage (0-100%)
-                const cpuUsage = Math.floor(Math.random() * 100);
-                this.cpuElement.textContent = `${cpuUsage}%`;
-
-                // Simulate memory usage (0-1000MB)
-                const memoryUsage = Math.floor(Math.random() * 1000);
-                this.memoryElement.textContent = `${memoryUsage} MB`;
-
-                // Simulate status changes
-                const statusChance = Math.random();
-                if (statusChance < 0.1) {
-                    this.setStatus('stopped', 'status-stopped');
-                } else if (statusChance < 0.2) {
-                    this.setStatus('warning', 'status-warning');
-                } else {
-                    this.setStatus('running', 'status-running');
-                }
-
-                // Add log entry
-                this.addLogEntry(`CPU: ${cpuUsage}%, Memory: ${memoryUsage}MB`);
-            }
-
-            setStatus(statusText, statusClass) {
-                this.statusText.textContent = statusText.charAt(0).toUpperCase() + statusText.slice(1);
-                this.statusElement.className = `status-indicator ${statusClass}`;
-            }
-
-            addLogEntry(message) {
-                const timestamp = new Date().toLocaleTimeString();
-                const entry = document.createElement('div');
-                entry.className = 'log-entry';
-                entry.textContent = `[${timestamp}] ${message}`;
-                this.logElement.insertBefore(entry, this.logElement.firstChild);
-                
-                // Limit log entries to 50
-                if (this.logElement.children.length > 50) {
-                    this.logElement.removeChild(this.logElement.lastChild);
-                }
-            }
+        // Simulated process data
+        function getRandomProcessData() {
+            return [
+                { pid: 1, name: 'system.exe', cpu: Math.random() * 100, memory: Math.random() * 1024 },
+                { pid: 2, name: 'app1.exe', cpu: Math.random() * 100, memory: Math.random() * 1024 },
+                { pid: 3, name: 'app2.exe', cpu: Math.random() * 100, memory: Math.random() * 1024 }
+            ];
         }
 
-        // Initialize the dashboard
-        const monitor = new ProcessMonitor();
+        // Chart initialization
+        const cpuData = [{ x: [], y: [], type: 'scatter', mode: 'lines', name: 'CPU' }];
+        const memoryData = [{ x: [], y: [], type: 'scatter', mode: 'lines', name: 'Memory' }];
+        const layout = { margin: { t: 20 }, yaxis: { range: [0, 100] } };
+
+        Plotly.newPlot('cpu-chart', cpuData, layout);
+        Plotly.newPlot('memory-chart', memoryData, { ...layout, yaxis: { range: [0, 1024] } });
+
+        // Update dashboard
+        function updateDashboard() {
+            const time = new Date().toLocaleTimeString();
+            const cpuValue = Math.random() * 100;
+            const memoryValue = Math.random() * 1024;
+
+            // Update charts
+            Plotly.extendTraces('cpu-chart', { x: [[time]], y: [[cpuValue]] }, [0]);
+            Plotly.extendTraces('memory-chart', { x: [[time]], y: [[memoryValue]] }, [0]);
+
+            // Update process list
+            const processes = getRandomProcessData();
+            const tbody = document.getElementById('process-list');
+            tbody.innerHTML = '';
+            processes.forEach(proc => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${proc.pid}</td>
+                    <td>${proc.name}</td>
+                    <td>${proc.cpu.toFixed(2)}</td>
+                    <td>${proc.memory.toFixed(2)}</td>
+                    <td><button class="terminate-btn" onclick="terminateProcess(${proc.pid})">Terminate</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Simulate process termination
+        function terminateProcess(pid) {
+            alert(`Terminating process ${pid} (simulated)`);
+            // In a real app, this would send a request to a backend
+        }
+
+        // Start updates
+        updateDashboard();
+        setInterval(updateDashboard, 2000); // Update every 2 seconds
     </script>
 </body>
 </html>

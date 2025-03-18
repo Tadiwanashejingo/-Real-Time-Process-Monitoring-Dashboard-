@@ -1,168 +1,64 @@
-    /* Reset and Base Styles */
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+/* General page styling */
+body {
+    font-family: Arial, sans-serif; /* Readable, professional font */
+    margin: 0; /* Remove default margins */
+    padding: 20px; /* Add padding around the dashboard */
+    background-color: #f4f4f4; /* Light gray background for contrast */
+}
 
-    body {
-        font-family: 'Segoe UI', Arial, sans-serif;
-        background-color: #f5f6fa;
-        padding: 20px;
-        line-height: 1.6;
-    }
+/* Center and constrain content */
+.container {
+    max-width: 1200px; /* Limit width for large screens */
+    margin: 0 auto; /* Center horizontally */
+}
 
-    /* Dashboard Container */
-    .dashboard {
-        max-width: 1200px;
-        margin: 0 auto;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 20px;
-        animation: fadeIn 0.5s ease-in;
-    }
+/* Grid layout for dashboard sections */
+.dashboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two equal-width columns for charts */
+    gap: 20px; /* Spacing between grid items */
+}
 
-    /* Card Styles */
-    .card {
-        background: white;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        transition: transform 0.2s ease-in-out;
-    }
+/* Styling for individual dashboard sections */
+.card {
+    background: white; /* White background for clarity */
+    padding: 20px; /* Internal spacing */
+    border-radius: 8px; /* Rounded corners for modern look */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+}
 
-    .card:hover {
-        transform: translateY(-5px);
-    }
+/* Process table styling */
+.process-table {
+    width: 100%; /* Full width of its container */
+    border-collapse: collapse; /* Remove gaps between cells */
+}
 
-    .card.full-width {
-        grid-column: span 3;
-    }
+.process-table th, 
+.process-table td {
+    padding: 10px; /* Padding for cell content */
+    text-align: left; /* Left-align text for readability */
+    border-bottom: 1px solid #ddd; /* Light border between rows */
+}
 
-    /* Typography */
-    .metric-title {
-        color: #6b7280;
-        font-size: 14px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 12px;
-    }
+.process-table th {
+    background-color: #f0f0f0; /* Light gray for header */
+}
 
-    .metric-value {
-        font-size: 28px;
-        font-weight: 600;
-        color: #1f2937;
-        margin: 0;
-    }
+/* Terminate button styling */
+.terminate-btn {
+    background-color: #ff4444; /* Red to indicate action */
+    color: white; /* White text for contrast */
+    border: none; /* No border for clean look */
+    padding: 5px 10px; /* Compact padding */
+    border-radius: 4px; /* Slightly rounded corners */
+    cursor: pointer; /* Hand cursor on hover */
+}
 
-    /* Status Indicator */
-    .status-indicator {
-        width: 16px;
-        height: 16px;
-        border-radius: 50%;
-        display: inline-block;
-        margin-right: 8px;
-        vertical-align: middle;
-        transition: background-color 0.3s ease;
-    }
+.terminate-btn:hover {
+    background-color: #cc0000; /* Darker red on hover for feedback */
+}
 
-    .status-running { background-color: #22c55e; }
-    .status-stopped { background-color: #ef4444; }
-    .status-warning { background-color: #f59e0b; }
-
-    .status-text {
-        vertical-align: middle;
-        font-weight: 500;
-    }
-
-    /* Log Section */
-    #log {
-        height: 250px;
-        overflow-y: auto;
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 6px;
-        padding: 10px;
-        font-family: 'Courier New', monospace;
-        font-size: 13px;
-    }
-
-    .log-entry {
-        padding: 6px 8px;
-        margin: 4px 0;
-        border-radius: 4px;
-        background: rgba(0,0,0,0.02);
-        transition: background 0.2s;
-    }
-
-    .log-entry:hover {
-        background: rgba(0,0,0,0.05);
-    }
-
-    /* Scrollbar Styling */
-    #log::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    #log::-webkit-scrollbar-track {
-        background: #f1f5f9;
-    }
-
-    #log::-webkit-scrollbar-thumb {
-        background: #94a3b8;
-        border-radius: 4px;
-    }
-
-    #log::-webkit-scrollbar-thumb:hover {
-        background: #64748b;
-    }
-
-    /* Animations */
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-        .dashboard {
-            grid-template-columns: 1fr;
-        }
-        
-        .card.full-width {
-            grid-column: span 1;
-        }
-
-        .metric-value {
-            font-size: 24px;
-        }
-    }
-
-    /* Dark Mode Support */
-    @media (prefers-color-scheme: dark) {
-        body {
-            background-color: #1f2937;
-        }
-
-        .card {
-            background: #374151;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-        }
-
-        .metric-title {
-            color: #9ca3af;
-        }
-
-        .metric-value {
-            color: #f3f4f6;
-        }
-
-        #log {
-            background: #2d3748;
-            border-color: #4b5563;
-        }
-
-        .log-entry {
-            background: rgba(255,255,255,0.05);
-        }
+/* Ensure charts have a consistent height */
+#cpu-chart, #memory-chart {
+    height: 300px; /* Fixed height for uniformity */
 }

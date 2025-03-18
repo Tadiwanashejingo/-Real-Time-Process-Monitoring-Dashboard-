@@ -1,149 +1,78 @@
-class ProcessMonitor {
-    constructor(config = {}) {
-        // DOM Elements
-        this.elements = {
-            statusIndicator: document.getElementById('statusIndicator'),
-            statusText: document.getElementById('statusText'),
-            cpuUsage: document.getElementById('cpuUsage'),
-            memoryUsage: document.getElementById('memoryUsage'),
-            log: document.getElementById('log')
-        };
-
-        // Configuration
-        this.config = {
-            updateInterval: config.updateInterval || 1000,
-            maxLogEntries: config.maxLogEntries || 50,
-            apiEndpoint: config.apiEndpoint || '/api/process-stats'
-        };
-
-        // State
-        this.state = {
-            isRunning: false,
-            lastUpdate: null,
-            errorCount: 0,
-            maxErrors: 5
-        };
-
-        this.init();
-    }
-
-    init() {
-        try {
-            this.startMonitoring();
-            this.addLogEntry('Process Monitor initialized');
-        } catch (error) {
-            this.handleError('Initialization failed', error);
-        }
-    }
-
-    startMonitoring() {
-        if (this.state.isRunning) return;
-        
-        this.state.isRunning = true;
-        this.monitoringLoop();
-        
-        // Clean up on page unload
-        window.addEventListener('unload', () => {
-            this.stopMonitoring();
-        });
-    }
-
-    stopMonitoring() {
-        this.state.isRunning = false;
-        this.addLogEntry('Monitoring stopped');
-    }
-
-    async monitoringLoop() {
-        while (this.state.isRunning) {
-            try {
-                await this.updateMetrics();
-                this.state.errorCount = 0;
-            } catch (error) {
-                this.handleError('Update failed', error);
-                if (this.state.errorCount >= this.state.maxErrors) {
-                    this.stopMonitoring();
-                    break;
-                }
-            }
-            await new Promise(resolve => setTimeout(resolve, this.config.updateInterval));
-        }
-    }
-
-    async updateMetrics() {
-        // Simulated API call - replace with real data source
-        const data = await this.fetchMetrics();
-        
-        // Update UI
-        this.elements.cpuUsage.textContent = `${data.cpu}%`;
-        this.elements.memoryUsage.textContent = `${data.memory} MB`;
-        this.setStatus(data.status);
-        this.addLogEntry(`CPU: ${data.cpu}%, Memory: ${data.memory}MB`);
-        
-        this.state.lastUpdate = new Date();
-    }
-
-    // Simulated data fetch - replace with actual API
-    async fetchMetrics() {
-        return new Promise(resolve => {
-            setTimeout(() => {
-                resolve({
-                    cpu: Math.floor(Math.random() * 100),
-                    memory: Math.floor(Math.random() * 1000),
-                    status: Math.random() < 0.1 ? 'stopped' : 
-                           Math.random() < 0.2 ? 'warning' : 'running'
-                });
-            }, 200);
-        });
-    }
-
-    setStatus(status) {
-        const statusMap = {
-            running: { text: 'Running', class: 'status-running' },
-            stopped: { text: 'Stopped', class: 'status-stopped' },
-            warning: { text: 'Warning', class: 'status-warning' }
-        };
-
-        const statusInfo = statusMap[status] || statusMap.running;
-        this.elements.statusText.textContent = statusInfo.text;
-        this.elements.statusIndicator.className = `status-indicator ${statusInfo.class}`;
-    }
-
-    addLogEntry(message) {
-        const timestamp = new Date().toLocaleTimeString();
-        const entry = document.createElement('div');
-        entry.className = 'log-entry';
-        entry.textContent = `[${timestamp}] ${message}`;
-        
-        this.elements.log.insertBefore(entry, this.elements.log.firstChild);
-        
-        // Maintain max log entries
-        while (this.elements.log.children.length > this.config.maxLogEntries) {
-            this.elements.log.removeChild(this.elements.log.lastChild);
-        }
-        
-        // Auto-scroll to top if near top
-        if (this.elements.log.scrollTop < 50) {
-            this.elements.log.scrollTop = 0;
-        }
-    }
-
-    handleError(message, error) {
-        console.error(`${message}:`, error);
-        this.state.errorCount++;
-        this.addLogEntry(`ERROR: ${message} - ${error.message}`);
-        this.setStatus('warning');
-    }
+// Simulated process data (replace with real backend data in production)
+function getRandomProcessData() {
+    return [
+        { pid: 1, name: 'system.exe', cpu: Math.random() * 100, memory: Math.random() * 1024 },
+        { pid: 2, name: 'app1.exe', cpu: Math.random() * 100, memory: Math.random() * 1024 },
+        { pid: 3, name: 'app2.exe', cpu: Math.random() * 100, memory: Math.random() * 1024 }
+    ];
 }
 
-// Usage
-const monitor = new ProcessMonitor({
-    updateInterval: 1000,    // Update every 1 second
-    maxLogEntries: 50,       // Keep last 50 log entries
-    apiEndpoint: '/api/process-stats'  // Your API endpoint
+// Chart initialization with Plotly.js
+const cpuData = [{ 
+    x: [], // Time values
+    y: [], // CPU usage values
+    type: 'scatter', 
+    mode: 'lines', // Line chart
+    name: 'CPU' 
+}];
+
+const memoryData = [{ 
+    x: [], 
+    y: [], 
+    type: 'scatter', 
+    mode: 'lines', 
+    name: 'Memory' 
+}];
+
+const layout = { 
+    margin: { t: 20 }, // Minimal top margin for compact display
+    yaxis: { range: [0, 100] } // CPU range: 0-100%
+};
+
+// Initialize CPU chart
+Plotly.newPlot('cpu-chart', cpuData, layout);
+
+// Initialize Memory chart with adjusted range
+Plotly.newPlot('memory-chart', memoryData, { 
+    ...layout, 
+    yaxis: { range: [0, 1024] } // Memory range: 0-1024 MB
 });
 
-// Example: Add manual controls
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'p') monitor.stopMonitoring();
-    if (e.key === 's') monitor.startMonitoring();
-});
+// Update dashboard with real-time data
+function updateDashboard() {
+    const time = new Date().toLocaleTimeString(); // Current time for x-axis
+    const cpuValue = Math.random() * 100; // Simulated CPU usage
+    const memoryValue = Math.random() * 1024; // Simulated memory usage
+
+    // Update charts by appending new data points
+    Plotly.extendTraces('cpu-chart', { x: [[time]], y: [[cpuValue]] }, [0]);
+    Plotly.extendTraces('memory-chart', { x: [[time]], y: [[memoryValue]] }, [0]);
+
+    // Update process list
+    const processes = getRandomProcessData();
+    const tbody = document.getElementById('process-list');
+    tbody.innerHTML = ''; // Clear existing rows
+
+    processes.forEach(proc => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${proc.pid}</td>
+            <td>${proc.name}</td>
+            <td>${proc.cpu.toFixed(2)}</td>
+            <td>${proc.memory.toFixed(2)}</td>
+            <td><button class="terminate-btn" onclick="terminateProcess(${proc.pid})">Terminate</button></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// Simulate process termination
+function terminateProcess(pid) {
+    alert(`Terminating process ${pid} (simulated)`);
+    // In a real app, this would send a request to the backend, e.g.:
+    // fetch(`/terminate/${pid}`, { method: 'POST' }).then(() => updateDashboard());
+}
+
+// Start the dashboard and set real-time updates
+updateDashboard(); // Initial call
+setInterval(updateDashboard, 2000); // Update every 2 seconds
