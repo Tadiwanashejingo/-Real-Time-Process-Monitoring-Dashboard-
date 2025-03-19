@@ -1,64 +1,63 @@
-/* General page styling */
+
 body {
-    font-family: Arial, sans-serif; /* Readable, professional font */
-    margin: 0; /* Remove default margins */
-    padding: 20px; /* Add padding around the dashboard */
-    background-color: #f4f4f4; /* Light gray background for contrast */
+    font-family: Arial, sans-serif;
+    margin: 0; 
+    padding: 20px; 
+    background-color: #f4f4f4; 
 }
 
-/* Center and constrain content */
+
 .container {
-    max-width: 1200px; /* Limit width for large screens */
-    margin: 0 auto; /* Center horizontally */
+    max-width: 1200px; 
+    margin: 0 auto; 
 }
 
-/* Grid layout for dashboard sections */
 .dashboard {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Two equal-width columns for charts */
-    gap: 20px; /* Spacing between grid items */
+    grid-template-columns: 1fr 1fr; 
+    gap: 20px; 
 }
 
-/* Styling for individual dashboard sections */
+
 .card {
-    background: white; /* White background for clarity */
-    padding: 20px; /* Internal spacing */
-    border-radius: 8px; /* Rounded corners for modern look */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+    background: white; 
+    padding: 20px; 
+    border-radius: 8px; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
 }
 
-/* Process table styling */
+
 .process-table {
-    width: 100%; /* Full width of its container */
-    border-collapse: collapse; /* Remove gaps between cells */
+    width: 100%; 
+    border-collapse: collapse; 
 }
 
 .process-table th, 
 .process-table td {
-    padding: 10px; /* Padding for cell content */
-    text-align: left; /* Left-align text for readability */
-    border-bottom: 1px solid #ddd; /* Light border between rows */
+    padding: 10px; 
+    text-align: left; 
+    border-bottom: 1px solid #ddd; 
 }
 
 .process-table th {
-    background-color: #f0f0f0; /* Light gray for header */
+    background-color: #f0f0f0; 
 }
 
-/* Terminate button styling */
+
 .terminate-btn {
-    background-color: #ff4444; /* Red to indicate action */
-    color: white; /* White text for contrast */
-    border: none; /* No border for clean look */
-    padding: 5px 10px; /* Compact padding */
-    border-radius: 4px; /* Slightly rounded corners */
-    cursor: pointer; /* Hand cursor on hover */
+    background-color: #ff4444; 
+    color: white; 
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px; 
+    cursor: pointer; 
 }
 
 .terminate-btn:hover {
-    background-color: #cc0000; /* Darker red on hover for feedback */
+    background-color: #cc0000; 
 }
 
-/* Ensure charts have a consistent height */
+
 #cpu-chart, #memory-chart {
-    height: 300px; /* Fixed height for uniformity */
+    height: 300px;
 }
