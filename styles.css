@@ -1,63 +1,71 @@
-
 body {
     font-family: Arial, sans-serif;
-    margin: 0; 
-    padding: 20px; 
-    background-color: #f4f4f4; 
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
 }
-
 
 .container {
-    max-width: 1200px; 
-    margin: 0 auto; 
+    max-width: 1200px;
+    margin: auto;
 }
 
-.dashboard {
-    display: grid;
-    grid-template-columns: 1fr 1fr; 
-    gap: 20px; 
+h1 {
+    text-align: center;
+    color: #333;
 }
 
-
-.card {
-    background: white; 
-    padding: 20px; 
-    border-radius: 8px; 
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+.status-bar {
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #ddd;
+    text-align: center;
+    font-weight: bold;
 }
 
-
-.process-table {
-    width: 100%; 
-    border-collapse: collapse; 
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background-color: white;
 }
 
-.process-table th, 
-.process-table td {
-    padding: 10px; 
-    text-align: left; 
-    border-bottom: 1px solid #ddd; 
+th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
 }
 
-.process-table th {
-    background-color: #f0f0f0; 
+th {
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
 }
 
+tr.alert {
+    background-color: #ffcccc;
+}
 
-.terminate-btn {
-    background-color: #ff4444; 
-    color: white; 
+button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
     border: none;
-    padding: 5px 10px;
-    border-radius: 4px; 
-    cursor: pointer; 
+    cursor: pointer;
 }
 
-.terminate-btn:hover {
-    background-color: #cc0000; 
+button:hover {
+    background-color: #45a049;
 }
 
+.charts {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
 
-#cpu-chart, #memory-chart {
-    height: 300px;
+canvas {
+    background-color: white;
+    padding: 10px;
+    border-radius: 5px;
 }
