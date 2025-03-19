@@ -85,7 +85,7 @@
     </div>
 
     <script>
-        // Simulated process data
+        
         function getRandomProcessData() {
             return [
                 { pid: 1, name: 'system.exe', cpu: Math.random() * 100, memory: Math.random() * 1024 },
@@ -94,7 +94,6 @@
             ];
         }
 
-        // Chart initialization
         const cpuData = [{ x: [], y: [], type: 'scatter', mode: 'lines', name: 'CPU' }];
         const memoryData = [{ x: [], y: [], type: 'scatter', mode: 'lines', name: 'Memory' }];
         const layout = { margin: { t: 20 }, yaxis: { range: [0, 100] } };
@@ -102,17 +101,17 @@
         Plotly.newPlot('cpu-chart', cpuData, layout);
         Plotly.newPlot('memory-chart', memoryData, { ...layout, yaxis: { range: [0, 1024] } });
 
-        // Update dashboard
+       
         function updateDashboard() {
             const time = new Date().toLocaleTimeString();
             const cpuValue = Math.random() * 100;
             const memoryValue = Math.random() * 1024;
 
-            // Update charts
+            
             Plotly.extendTraces('cpu-chart', { x: [[time]], y: [[cpuValue]] }, [0]);
             Plotly.extendTraces('memory-chart', { x: [[time]], y: [[memoryValue]] }, [0]);
 
-            // Update process list
+           
             const processes = getRandomProcessData();
             const tbody = document.getElementById('process-list');
             tbody.innerHTML = '';
@@ -129,15 +128,15 @@
             });
         }
 
-        // Simulate process termination
+        
         function terminateProcess(pid) {
             alert(`Terminating process ${pid} (simulated)`);
-            // In a real app, this would send a request to a backend
+           
         }
 
-        // Start updates
+       
         updateDashboard();
-        setInterval(updateDashboard, 2000); // Update every 2 seconds
+        setInterval(updateDashboard, 2000); 
     </script>
 </body>
 </html>
