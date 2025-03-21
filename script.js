@@ -1,4 +1,4 @@
-// Mock data simulation (replace with API if available)
+
 function getMockSystemData() {
     const processes = [
         { id: 1, name: "chrome.exe", cpu: Math.random() * 50, memory: Math.random() * 1000 },
@@ -11,24 +11,24 @@ function getMockSystemData() {
     return { processes, totalCpu: Math.min(totalCpu, 100), totalMem, maxMem: 16000 };
 }
 
-// Module 1: Data Collection
+
 let systemData = getMockSystemData();
 function fetchData() {
-    systemData = getMockSystemData(); // Simulate fetching new data
+    systemData = getMockSystemData(); 
     updateUI();
     updateCharts();
 }
 
-// Real-Time Updates
-setInterval(fetchData, 2000); // Refresh every 2 seconds
 
-// Module 2: User Interface
+setInterval(fetchData, 2000); 
+
+
 function updateUI() {
-    // Status Display
+   
     document.getElementById("cpu-total").textContent = `${systemData.totalCpu.toFixed(1)}%`;
     document.getElementById("mem-total").textContent = `${systemData.totalMem.toFixed(0)} MB / ${systemData.maxMem} MB`;
 
-    // Process Table
+ 
     const tbody = document.getElementById("process-list");
     tbody.innerHTML = "";
     systemData.processes.forEach(proc => {
@@ -40,12 +40,12 @@ function updateUI() {
             <td>${proc.memory.toFixed(0)}</td>
             <td><button onclick="terminateProcess(${proc.id})">Terminate</button></td>
         `;
-        if (proc.cpu > 40) row.classList.add("alert"); // Highlight if CPU > 40%
+        if (proc.cpu > 40) row.classList.add("alert"); 
         tbody.appendChild(row);
     });
 }
 
-// Sortable Table
+
 function sortTable(column) {
     const sorted = systemData.processes.sort((a, b) => {
         const values = [
@@ -59,7 +59,7 @@ function sortTable(column) {
     updateUI();
 }
 
-// Control Actions
+
 function refreshData() {
     fetchData();
 }
@@ -70,7 +70,7 @@ function terminateProcess(id) {
     updateCharts();
 }
 
-// Module 3: Data Visualization
+
 const cpuChart = new Chart(document.getElementById("cpuChart"), {
     type: "line",
     data: {
@@ -100,19 +100,19 @@ const memChart = new Chart(document.getElementById("memChart"), {
 
 let timeStamps = [];
 function updateCharts() {
-    // Line Chart: CPU over time
+  
     const now = new Date().toLocaleTimeString();
     timeStamps.push(now);
-    cpuChart.data.labels = timeStamps.slice(-10); // Last 10 updates
+    cpuChart.data.labels = timeStamps.slice(-10);
     cpuChart.data.datasets[0].data.push(systemData.totalCpu);
     cpuChart.data.datasets[0].data = cpuChart.data.datasets[0].data.slice(-10);
     cpuChart.update();
 
-    // Bar Chart: Memory per process
+  
     memChart.data.labels = systemData.processes.map(p => p.name);
     memChart.data.datasets[0].data = systemData.processes.map(p => p.memory);
     memChart.update();
 }
 
-// Initial Load
+
 fetchData();
